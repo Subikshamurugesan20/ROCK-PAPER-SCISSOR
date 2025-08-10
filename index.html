@@ -7,162 +7,102 @@
   <link rel="stylesheet" href="index.css" />
 </head>
 <body>
-  <div style="background-color: burlywood; height:600px; width: 900px; margin-left:300px; margin-top: 10px;">
-    <div class="center"></div>
+  <div class="game-container">
     <div id="head">
-      <div>Rock_Paper_Scissor</div>
+      <div>Rock Paper Scissor</div>
     </div>
     <div id="score">
-      <div id="roc">userscore: 0</div>
-      <div id="pap">computerscore: 0</div>
+      <div id="roc">User Score: 0</div>
+      <div id="pap">Computer Score: 0</div>
     </div>
     <div class="bg">
       <div class="cen">
-        <h3 id="us">User</h3>
+        <h3 id="us">User: -</h3>
       </div>
       <div class="cen">
-        <h3 id="com">Computer</h3>
+        <h3 id="com">Computer: -</h3>
       </div>
       <div class="cen">
-        <h3 id="res">Result</h3>
+        <h3 id="res">Result: Choose your move!</h3>
       </div>
-      </div>
+    </div>
     <div id="but">
-      <button onclick="rock()">&#9994;</button>
-      <button onclick="paper()">&#x1F596;</button>
-      <button onclick="scissor()">&#x270C;</button>
+      <button onclick="playRound('rock')">&#9994;</button>
+      <button onclick="playRound('paper')">&#x1F596;</button>
+      <button onclick="playRound('scissor')">&#x270C;</button>
     </div>
   </div>
 
   <script>
-    const data = document.getElementById("roc");
-    const data1 = document.getElementById("pap");
-    const data2 = document.getElementById("us");
-    const data3 = document.getElementById("com");
-    const data4 = document.getElementById("res");
-
+    const userScoreDisplay = document.getElementById("roc");
+    const computerScoreDisplay = document.getElementById("pap");
+    const userChoiceDisplay = document.getElementById("us");
+    const computerChoiceDisplay = document.getElementById("com");
+    const resultDisplay = document.getElementById("res");
 
     let userscore = 0;
     let computerscore = 0;
+    const WINNING_SCORE = 10;
 
-    function usercheck(score) {
-      if (score === 10) {
-        data4.innerHTML = "User wins the game";
-        userscore = 0;
-        computerscore = 0;
-        data.innerHTML = "userscore: 0";
-        data1.innerHTML = "computerscore: 0";
-        data2.innerHTML = "User: 0";
-        data3.innerHTML = "Computer: 0";
+    function getComputerChoice() {
+      const choices = ['rock', 'paper', 'scissor'];
+      const randomIndex = Math.floor(Math.random() * choices.length);
+      return choices[randomIndex];
+    }
+
+    function determineWinner(userChoice, computerChoice) {
+      if (userChoice === computerChoice) {
+        return "tie";
+      } else if (
+        (userChoice === "rock" && computerChoice === "scissor") ||
+        (userChoice === "paper" && computerChoice === "rock") ||
+        (userChoice === "scissor" && computerChoice === "paper")
+      ) {
+        return "user win";
+      } else {
+        return "computer win";
       }
     }
 
-    function computercheck(score) {
-      if (score === 10) {
-        data4.innerHTML = "Computer wins the game";
-        userscore = 0;
-        computerscore = 0;
-        data.innerHTML = "userscore: 0";
-        data1.innerHTML = "computerscore: 0";
-        data2.innerHTML = "User: 0";
-        data3.innerHTML = "Computer: 0";
-      }
-    }
+    function playRound(userChoice) {
+      const computerChoice = getComputerChoice();
+      const result = determineWinner(userChoice, computerChoice);
 
-    function rock() {
-      const num = Math.round(Math.random() * 100);
-      let comp = "";
-      if (num >= 0 && num <= 33) {
-        comp = "rock";
-      } else if (num >= 34 && num <= 66) {
-        comp = "paper";
-      } else {
-        comp = "scissor";
-      }
-
-      let result = "";
-      if (comp === "rock") {
-        result = "tie";
-      } else if (comp === "paper") {
-        result = "computer win";
-        computerscore++;
-      } else {
-        result = "user win";
+      if (result === "user win") {
         userscore++;
+      } else if (result === "computer win") {
+        computerscore++;
       }
 
-      data.innerHTML = "userscore: " + userscore;
-      data1.innerHTML = "computerscore: " + computerscore;
-      data2.innerHTML = "User: rock";
-      data3.innerHTML = "Computer: " + comp;
-      data4.innerHTML = "Result: " + result;
+      userScoreDisplay.innerHTML = "User Score: " + userscore;
+      computerScoreDisplay.innerHTML = "Computer Score: " + computerscore;
+      userChoiceDisplay.innerHTML = "User: " + userChoice.charAt(0).toUpperCase() + userChoice.slice(1);
+      computerChoiceDisplay.innerHTML = "Computer: " + computerChoice.charAt(0).toUpperCase() + computerChoice.slice(1);
+      resultDisplay.innerHTML = "Result: " + result.charAt(0).toUpperCase() + result.slice(1);
 
-      usercheck(userscore);
-      computercheck(computerscore);
+      checkGameWinner();
     }
 
-    function paper() {
-      const num = Math.round(Math.random() * 100);
-      let comp = "";
-      if (num >= 0 && num <= 33) {
-        comp = "rock";
-      } else if (num >= 34 && num <= 66) {
-        comp = "paper";
-      } else {
-        comp = "scissor";
+    function checkGameWinner() {
+      if (userscore === WINNING_SCORE) {
+        resultDisplay.innerHTML = "🥳 User wins the game!";
+        resetGame();
+      } else if (computerscore === WINNING_SCORE) {
+        resultDisplay.innerHTML = "🤖 Computer wins the game!";
+        resetGame();
       }
-
-      let result = "";
-      if (comp === "paper") {
-        result = "tie";
-      } else if (comp === "scissor") {
-        result = "computer win";
-        computerscore++;
-      } else {
-        result = "user win";
-        userscore++;
-      }
-
-      data.innerHTML = "userscore: " + userscore;
-      data1.innerHTML = "computerscore: " + computerscore;
-      data2.innerHTML = "User: paper";
-      data3.innerHTML = "Computer: " + comp;
-      data4.innerHTML = "Result: " + result;
-
-      usercheck(userscore);
-      computercheck(computerscore);
     }
 
-    function scissor() {
-      const num = Math.round(Math.random() * 100);
-      let comp = "";
-      if (num >= 0 && num <= 33) {
-        comp = "rock";
-      } else if (num >= 34 && num <= 66) {
-        comp = "paper";
-      } else {
-        comp = "scissor";
-      }
-
-      let result = "";
-      if (comp === "scissor") {
-        result = "tie";
-      } else if (comp === "rock") {
-        result = "computer win";
-        computerscore++;
-      } else {
-        result = "user win";
-        userscore++;
-      }
-
-      data.innerHTML = "userscore: " + userscore;
-      data1.innerHTML = "computerscore: " + computerscore;
-      data2.innerHTML = "User: scissor";
-      data3.innerHTML = "Computer: " + comp;
-      data4.innerHTML = "Result: " + result;
-
-      usercheck(userscore);
-      computercheck(computerscore);
+    function resetGame() {
+      userscore = 0;
+      computerscore = 0;
+      setTimeout(() => {
+        userScoreDisplay.innerHTML = "User Score: 0";
+        computerScoreDisplay.innerHTML = "Computer Score: 0";
+        userChoiceDisplay.innerHTML = "User: -";
+        computerChoiceDisplay.innerHTML = "Computer: -";
+        resultDisplay.innerHTML = "Result: New game! Choose your move!";
+      }, 3000);
     }
   </script>
 </body>
